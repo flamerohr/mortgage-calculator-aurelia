@@ -1,0 +1,64 @@
+<template>
+	<require from="./mortgage-calculator"></require>
+	<require from="./converters/currency"></require>
+
+	<div class="mortgage-container">
+		<div class="card">
+			<div class="card-header">
+				<div class="card-title">Mortgage summary</div>
+			</div>
+			<div class="card-block">
+				<div class="form-group row">
+					<div class="col-sm-6">
+						<label class="form-control-label">Total principal</label>
+						<div>${ getTotalPrincipal() | currency & signal: 'formState' }</div>
+					</div>
+					<div class="col-sm-6">
+						<label class="form-control-label">Total interest paid</label>
+						<div>${ getTotalInterest() | currency & signal: 'formState' }</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<button class="btn btn-success"
+								click.trigger="addMortgage()">
+							Add new mortgage
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card" repeat.for="mortgage of state.mortgages">
+			<div class="card-header">
+				<div class="card-title">
+					Mortgage ${ mortgage.key + 1 }
+					<small class="m-l-2">${ mortgage.principal | currency & signal: 'formState' }</small>
+				</div>
+			</div>
+			<div class="card-block card-title-actions">
+				<a class="card-link"
+						click.trigger="toggleMortgage(mortgage.key)"
+						href="#">
+					${ (mortgage.show) ? 'Hide' : 'Show' }
+				</a>
+				<a class="card-link"
+						click.trigger="removeMortgage(mortgage.key)"
+						href="#"
+						if.bind="state.mortgages.length > 1">
+					Remove
+				</a>
+				<a class="card-link"
+						click.trigger="toggleMortgagePayment(mortgage.key)"
+						href="#"
+						if.bind="mortgage.show">
+					${ (mortgage.changePayment) ? 'Set term' : 'Set payments' }
+				</a>
+			</div>
+			<div class="card-block" show.bind="mortgage.show">
+				<mortgage-calculator onchange.bind="changed"
+						state.bind="mortgage"
+						view-model.ref="mortgage.viewModel"></mortgage-calculator>
+			</div>
+		</div>
+	</div>
+</template>

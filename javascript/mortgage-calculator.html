@@ -1,0 +1,73 @@
+<template>
+	<require from="./converters/percent"></require>
+	<require from="./converters/currency"></require>
+	<require from="./converters/decimal"></require>
+
+	<div class="row">
+		<div class="form-group col-xs-12 col-sm-12 col-md-5">
+			<label class="form-control-label" for="principal">Principal</label>
+			<div class="input-group">
+				<label class="input-group-addon" for="principal">$</label>
+				<input class="form-control"
+						id="principal"
+						name="principal"
+						type="text"
+						value.bind="state.principal">
+			</div>
+		</div>
+		<div class="form-group col-xs-6 col-sm-4 col-md-2">
+			<label class="form-control-label" for="interest">Interest rate</label>
+			<div class="input-group">
+				<input class="form-control"
+						id="interest"
+						name="interest"
+						type="text"
+						value.bind="state.interest | percent">
+				<label class="input-group-addon" for="interest">%</label>
+			</div>
+		</div>
+		<div class="form-group col-xs-6 col-sm-3 col-md-2">
+			<label class="form-control-label" for="period">Repayment</label>
+			<select class="form-control c-select"
+					id="period"
+					name="period"
+					value.bind="state.period">
+				<option value="${ period.value }" repeat.for="period of periods">${ period.text }</option>
+			</select>
+		</div>
+		<div class="form-group col-xs-12 col-sm-5 col-md-3"
+				if.bind="!state.changePayment">
+			<label class="form-control-label" for="term">Term (years)</label>
+			<input class="form-control"
+					id="term"
+					name="term"
+					type="text"
+					value.bind="state.term">
+		</div>
+		<div class="form-group col-xs-12 col-sm-5 col-md-3"
+				if.bind="state.changePayment">
+			<label class="form-control-label" for="payments">${ getPeriodText() & signal: 'formState' } payments</label>
+			<input class="form-control"
+					id="payments"
+					name="payments"
+					type="text"
+					value.bind="state.payments">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-sm-4 col-md-3"
+				if.bind="!state.changePayment">
+			<label class="form-control-label">${ getPeriodText() & signal: 'formState' } payments</label>
+			<p>${ state.payments | currency }</p>
+		</div>
+		<div class="col-xs-6 col-sm-4 col-md-3"
+				if.bind="state.changePayment">
+			<label class="form-control-label">Term (years)</label>
+			<p>${ state.term | decimal:1 }</p>
+		</div>
+		<div class="col-xs-6 col-sm-4 col-md-2">
+			<label class="form-control-label">Interest Paid</label>
+			<p>${ getInterest() | currency & signal: 'formState' }</p>
+		</div>
+	</div>
+</template>
